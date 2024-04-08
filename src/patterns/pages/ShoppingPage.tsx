@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ProductButtons, ProductCard, ProductImage, ProductTitle } from "../components"
 import '../styles/custom-styles.css'
-
-const product = {
-    id: '1',
-    title: "Coffe Mug",
-    img: "./coffee-mug.png"
-}
+import { useShoppingCart } from "../hooks/useShoppingCart"
+import {products} from "../data/products"
 
 const ShoppingPage = () => {
+    
+    const {shoppingCart,onProductCountChange} = useShoppingCart();
+
     return (
         <div>
             <h1>Shopping Store</h1>
@@ -19,39 +19,43 @@ const ShoppingPage = () => {
                 flexWrap: "wrap"
             }
             }>
-                <ProductCard product={product} className="bg-dark">
-                    {/* Modos de envio de Componentes Hijos -- Compound - Técnica 1 */}
-                    <ProductImage className="custom-image"></ProductImage>
-                    <ProductTitle title={""} className="text-white text-bold"></ProductTitle>
-                    <ProductButtons className="custom-buttons text-white"></ProductButtons>
-                </ProductCard>
 
-                <ProductCard product={product} className="bg-dark">
-                    {/* Modos de envio de Componentes Hijos -- Compound - Técnica 2 */}
-                    <ProductCard.Image className="custom-image"></ProductCard.Image>
-                    <ProductCard.Title title={"Producto 2"} className="text-white text-bold"></ProductCard.Title>
-                    <ProductCard.Buttons className="custom-buttons text-white"></ProductCard.Buttons>
-                </ProductCard>
+                {
+                    products.map(product => (
+                        <ProductCard
+                            product={product}
+                            className="bg-dark"
+                            key={product.id}
+                            onChange={onProductCountChange}
+                            value={shoppingCart[product.id]?.count || 0}
+                        >
+                            <ProductCard.Image className="custom-image"></ProductCard.Image>
+                            <ProductCard.Title className="text-white text-bold"></ProductCard.Title>
+                            <ProductCard.Buttons className="custom-buttons text-white"></ProductCard.Buttons>
+                        </ProductCard>
+                    ))
+                }
+            </div>
 
-                <ProductCard product={product} className="text-white" style={{
-                    backgroundColor: "#222ddd",
-                }}>
-                    {/* Modos de envio de Componentes Hijos -- Compound - Técnica 1 */}
-                    <ProductImage style={{
-                        opacity: 0.85
-                    }}></ProductImage>
-                    <ProductTitle style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        textAlign: "center",
-                    }} ></ProductTitle>
-                    <ProductButtons style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        textAlign: "center"
-                    }} className="custom-buttons text-white"></ProductButtons>
-                </ProductCard>
-
+            {/* Barra Lateral - Shopping Cart */}
+            <div className="shopping-cart">
+                {
+                    Object.keys(shoppingCart).length !== 0 && 
+                        Object.values(shoppingCart).map((product) => {
+                            return <ProductCard 
+                                product={product} 
+                                className="bg-dark"
+                                key={product.id}
+                                style={{ width: '100px' }}
+                                value={product.count}
+                                onChange={onProductCountChange}
+                                >
+                                <ProductCard.Image className="custom-image"></ProductCard.Image>
+                                <ProductCard.Buttons className="custom-buttons text-white" style={{ display: 'flex', justifyContent: 'center' }}></ProductCard.Buttons>
+                            </ProductCard>
+                        })
+                    
+                }
 
             </div>
         </div>
